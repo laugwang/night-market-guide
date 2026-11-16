@@ -29,7 +29,7 @@ function pagerLink(food, cls, label) {
   const res = await fetch(`content/foods/${encodeURIComponent(slug)}.md`, { cache: "no-cache" });
   if (!res.ok) return notFound(`找不到 ${slug}.md 內文檔案。`);
   const md = await res.text();
-  const body = renderMarkdown(md);
+  const body = renderMarkdown(stripFrontMatter(md));
 
   document.title = `${food.name} ${food.en}｜夜市小吃圖鑑`;
   document.querySelector('meta[name="description"]').setAttribute("content", food.summary);

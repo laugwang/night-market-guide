@@ -1,4 +1,4 @@
-# 將整個 repo 以靜態檔案部署到 GitHub Pages（無建置步驟，見 AGENTS.md §2）
+# 驗證內容、產生 data/foods.json，再把整個 repo 部署到 GitHub Pages（見 AGENTS.md §2）
 name: Deploy to GitHub Pages
 
 on:
@@ -23,8 +23,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: Validate content
-        run: python3 scripts/check.py
+      - name: Validate content & build index
+        run: python3 scripts/build.py
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

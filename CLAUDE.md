@@ -6,6 +6,7 @@
 
 快速提醒：
 
-- 新增小吃 = `content/foods/<slug>.md` + `data/foods.json` 末端一筆資料，**不要改 HTML/JS**。
-- 完成後一定要跑 `python3 scripts/check.py`。
+- 新增小吃 = 只新增一個 `content/foods/<slug>.md`，**不要改 HTML/JS/JSON**。
+- 完成後一定要跑 `python3 scripts/build.py`。
+- 修改檢查規則時，AGENTS.md、scripts/build.py、assets/js/add.js 三處要同步。
 - 繁體中文、台灣用語、不捏造年份與店名。

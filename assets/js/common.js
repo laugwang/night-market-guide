@@ -3,6 +3,14 @@
 
 const DATA_URL = "data/foods.json";
 
+// GitHub repo 設定：add.html 的「送出到 GitHub」會用到。換 repo 時只要改這裡。
+const SITE = { repo: "laugwang/night-market-guide", branch: "main" };
+
+// 把 Markdown 開頭 --- 包起來的 front matter 拿掉，只留內文
+function stripFrontMatter(md) {
+  return md.replace(/\r/g, "").replace(/^---\n[\s\S]*?\n---\n?/, "");
+}
+
 async function loadFoods() {
   const res = await fetch(DATA_URL, { cache: "no-cache" });
   if (!res.ok) throw new Error(`無法讀取 ${DATA_URL}（${res.status}）`);

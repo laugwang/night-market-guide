@@ -17,6 +17,7 @@
       <a class="brand" href="index.html"><span class="brand-mark">🏮</span><span>夜市小吃圖鑑</span></a>
       <nav class="nav">
         <a href="index.html">圖鑑</a>
+        <a href="add.html">＋ 新增</a>
         <a href="about.html" aria-current="page">關於</a>
         <button class="theme-btn" type="button" aria-label="切換深淺色">🌙</button>
       </nav>
@@ -26,26 +27,25 @@
     <article class="entry prose">
       <a class="back" href="index.html">← 回到圖鑑</a>
       <h1>關於夜市小吃圖鑑</h1>
-      <p>這是一個用 <code>AGENTS.md</code> 驅動的小型內容網站。網站的程式只寫一次，之後每新增一道小吃，只要照著同一套規則補上「一個 Markdown 檔 + 一筆 JSON 資料」，首頁卡片、分類篩選和條目頁就會自動出現。</p>
+      <p>這是一個用 <code>AGENTS.md</code> 驅動的小型內容網站。網站的程式只寫一次，之後每道小吃都只是<strong>一個 Markdown 檔</strong>，首頁卡片、分類篩選和條目頁都會自動產生。</p>
+
+      <h2>三種新增方式，同一套規則</h2>
+      <ul>
+        <li><strong>一般人</strong>：到 <a href="add.html">＋ 新增</a> 填表單，即時預覽、即時檢查，按「送出到 GitHub」再按一次 Commit 就上線。</li>
+        <li><strong>AI</strong>：對 AI 說「依照 AGENTS.md 新增一道『滷肉飯』」，它會照範本寫好檔案並自己跑驗證。</li>
+        <li><strong>開發者</strong>：複製 <code>templates/food-template.md</code>，執行 <code>python3 scripts/build.py</code>。</li>
+      </ul>
+      <blockquote><p>不管誰新增，GitHub 在部署前都會用同一支檢查程式把關，格式不對就不會上線。</p></blockquote>
 
       <h2>每張圖鑑卡都一樣</h2>
       <ul>
-        <li><strong>後設資料</strong>放在 <code>data/foods.json</code>：名稱、英文名、分類、地區、價位、辣度、標籤、一句話介紹。</li>
-        <li><strong>內文</strong>放在 <code>content/foods/&lt;slug&gt;.md</code>，固定四段：它是什麼、怎麼吃最對味、小故事、逛夜市小提醒。</li>
+        <li>檔案開頭記錄名稱、英文名、分類、地區、價位、辣度、標籤、一句話介紹。</li>
+        <li>內文固定四段：它是什麼、怎麼吃最對味、小故事、逛夜市小提醒。</li>
         <li>分類只有四種：鹹食、甜食、飲品、炸物；標籤從固定清單挑選。</li>
       </ul>
 
-      <h2>讓 AI 接手的方式</h2>
-      <p>對 AI 說「依照 AGENTS.md 新增一道『滷肉飯』」，它就會：</p>
-      <ul>
-        <li>取 slug（例如 <code>braised-pork-rice</code>），複製範本寫好四段內文。</li>
-        <li>在 JSON 最後加入一筆資料，欄位全部依規則填寫。</li>
-        <li>執行 <code>python3 scripts/check.py</code> 自動驗證格式，通過才算完成。</li>
-      </ul>
-      <blockquote><p>規則寫得越具體，AI 每次產出的頁面就越一致。</p></blockquote>
-
       <h2>技術</h2>
-      <p>純 HTML、CSS、原生 JavaScript，沒有建置步驟，直接部署在 GitHub Pages。Markdown 由站內約 30 行的迷你轉換器在瀏覽器端轉成 HTML，完全不依賴外部函式庫。</p>
+      <p>純 HTML、CSS、原生 JavaScript，不依賴任何框架。每次更新時，GitHub Actions 先用 Python 驗證內容、產生索引，再部署到 GitHub Pages。Markdown 由站內約 30 行的迷你轉換器在瀏覽器端轉成 HTML，完全不依賴外部函式庫。</p>
     </article>
   </main>
   <footer class="site-footer">

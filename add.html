@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏮</text></svg>">
+  <title>新增小吃｜夜市小吃圖鑑</title>
+  <meta name="description" content="填表單就能新增一道夜市小吃到圖鑑，不需要寫程式。">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html"><span class="brand-mark">🏮</span><span>夜市小吃圖鑑</span></a>
+      <nav class="nav">
+        <a href="index.html">圖鑑</a>
+        <a href="add.html" aria-current="page">＋ 新增</a>
+        <a href="about.html">關於</a>
+        <button class="theme-btn" type="button" aria-label="切換深淺色">🌙</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <h1>新增一道<em>小吃</em></h1>
+      <p>填完表單、確認預覽沒問題，按「送出到 GitHub」再按一次綠色的 Commit 按鈕，約 1 分鐘後就會出現在圖鑑上。不用寫程式。</p>
+    </section>
+
+    <div class="add-layout">
+      <form id="form" class="add-form" novalidate>
+        <fieldset>
+          <legend>① 基本資料</legend>
+          <label class="field"><span class="field-label">中文名稱 <span class="req">*</span></span>
+            <input name="name" required placeholder="例如：滷肉飯" maxlength="12">
+          </label>
+          <label class="field"><span class="field-label">英文名稱 <span class="req">*</span></span>
+            <input name="en" required placeholder="例如：Braised Pork Rice">
+            <small class="hint">網址代號：<code id="slug">—</code>（自動產生）</small>
+          </label>
+          <div class="field"><span class="field-label">代表圖示 <span class="req">*</span></span>
+            <div class="emoji-row" id="emoji-row"></div>
+            <input name="emoji" required maxlength="4" class="emoji-input" placeholder="或自己貼一個 emoji">
+          </div>
+          <div class="field"><span class="field-label">分類 <span class="req">*</span></span>
+            <div class="choice-row" id="category-row"></div>
+          </div>
+          <div class="field-row">
+            <label class="field"><span class="field-label">代表地區 <span class="req">*</span></span>
+              <input name="region" required list="regions" placeholder="全台">
+              <datalist id="regions">
+                <option>全台</option><option>基隆</option><option>台北</option><option>新北</option>
+                <option>台中</option><option>彰化</option><option>嘉義</option><option>台南</option>
+                <option>高雄</option><option>屏東</option><option>宜蘭</option><option>花蓮</option>
+              </datalist>
+            </label>
+            <div class="field"><span class="field-label">價位（新台幣） <span class="req">*</span></span>
+              <div class="price-row">
+                <input name="priceMin" type="number" min="0" inputmode="numeric" placeholder="最低" aria-label="最低價">
+                <span>到</span>
+                <input name="priceMax" type="number" min="0" inputmode="numeric" placeholder="最高" aria-label="最高價">
+              </div>
+            </div>
+          </div>
+          <div class="field"><span class="field-label">辣度</span>
+            <div class="choice-row" id="spicy-row"></div>
+          </div>
+          <div class="field"><span class="field-label">標籤（選 1–3 個） <span class="req">*</span></span>
+            <div class="choice-row" id="tag-row"></div>
+          </div>
+          <label class="field"><span class="field-label">一句話介紹 <span class="req">*</span></span>
+            <input name="summary" required maxlength="29" placeholder="例如：肥瘦相間的滷肉淋在白飯上，台灣人的日常。">
+            <small class="hint"><span id="summary-count">0</span> / 30 字（含結尾自動補上的「。」）</small>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>② 內容介紹</legend>
+          <label class="field"><span class="field-label">它是什麼 <span class="req">*</span></span>
+            <textarea name="what" rows="4" placeholder="用料、口感、外觀，讓沒吃過的人能想像。"></textarea>
+          </label>
+          <label class="field"><span class="field-label">怎麼吃最對味 <span class="req">*</span></span>
+            <textarea name="how" rows="4" placeholder="一行寫一點，2–5 行&#10;例如：加一顆滷蛋更滿足&#10;配一碗貢丸湯剛剛好"></textarea>
+          </label>
+          <label class="field"><span class="field-label">小故事 <span class="req">*</span></span>
+            <textarea name="story" rows="4" placeholder="起源或名稱由來。不確定的請寫「一說」「據說」，不要編造年份和店名。"></textarea>
+          </label>
+          <label class="field"><span class="field-label">最重要的一個提醒 <span class="req">*</span></span>
+            <input name="tipMain" placeholder="例如：用餐時間人很多，建議避開六點到七點。">
+          </label>
+          <label class="field"><span class="field-label">其他提醒（選填，一行一點）</span>
+            <textarea name="tipMore" rows="3"></textarea>
+          </label>
+        </fieldset>
+
+        <div id="errors" class="form-errors" aria-live="polite"></div>
+
+        <div class="form-actions">
+          <button type="button" id="submit" class="btn primary">送出到 GitHub</button>
+          <button type="button" id="download" class="btn">下載 .md 檔</button>
+          <button type="button" id="copy" class="btn">複製內容</button>
+          <button type="button" id="reset" class="btn ghost">清空重填</button>
+        </div>
+        <details class="howto">
+          <summary>按下「送出到 GitHub」之後要做什麼？</summary>
+          <ol>
+            <li>會開啟 GitHub 的新增檔案頁面，內容已經幫你填好。</li>
+            <li>捲到最下面，按綠色的 <b>Commit changes</b>。</li>
+            <li>等約 1 分鐘，系統會自動檢查格式並更新網站。</li>
+          </ol>
+          <p>需要登入有這個 repo 編輯權限的 GitHub 帳號。沒有權限的話，可以按「下載 .md 檔」寄給管理者。</p>
+        </details>
+      </form>
+
+      <aside class="add-preview" aria-label="即時預覽">
+        <p class="preview-label">卡片預覽</p>
+        <div id="preview-card"></div>
+        <p class="preview-label">內文預覽</p>
+        <article id="preview-body" class="prose preview-body"></article>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">夜市小吃圖鑑 · 表單產生的內容與 AI 新增的內容使用同一套 <a href="https://github.com/laugwang/night-market-guide/blob/main/AGENTS.md">AGENTS.md</a> 規則</div>
+  </footer>
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/add.js"></script>
+</body>
+</html>

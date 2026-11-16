@@ -11,9 +11,9 @@
 
 - 目標讀者：第一次逛台灣夜市的人、外國朋友、想認識小吃背景的學生。
 - 每一道小吃 = 一篇「圖鑑條目」，格式完全一致，讓讀者可以快速比較。
-- 網站必須能直接部署在 **GitHub Pages**，**不需要任何建置步驟**（no build step）。
+- **一般人也能新增內容**：在網站的「＋ 新增」表單填寫，送出到 GitHub 後自動上線，不需要寫程式。
 
-一句話：**新增一道小吃，只需要「一個 Markdown 檔 + 一筆 JSON 資料」。**
+一句話：**一道小吃 = 一個 Markdown 檔**（`content/foods/<slug>.md`）。其他東西都是自動產生的。
 
 ---
 
@@ -24,8 +24,9 @@
 | 技術 | 純 HTML + CSS + 原生 JavaScript（ES2020），不使用框架 |
 | 外部函式庫 | **不使用**。Markdown 由 `assets/js/common.js` 內建的 `renderMarkdown()` 轉成 HTML |
 | 字型 | Google Fonts：`Noto Sans TC`、`Noto Serif TC` |
-| 部署 | GitHub Pages，由 `.github/workflows/pages.yml` 在每次 push 到 `main` 時自動部署（會先跑 `scripts/check.py`，驗證失敗就不會上線） |
-| 建置 | **禁止**加入 npm、bundler、SSG 等建置流程 |
+| 索引 | `scripts/build.py`（只用 Python 標準函式庫）驗證所有 Markdown 並產生 `data/foods.json` |
+| 部署 | `.github/workflows/pages.yml`：每次 push 到 `main` → 執行 `build.py` → 部署到 GitHub Pages。**驗證失敗就不會上線** |
+| 禁止 | npm、bundler、SSG、TypeScript、SCSS 等任何需要額外安裝的建置流程 |
 
 所有路徑一律使用**相對路徑**（例如 `assets/css/style.css`），不可用 `/` 開頭，否則在 GitHub Pages 子路徑下會壞掉。
 
@@ -40,95 +41,128 @@ night-market-guide/
 ├── README.md              ← 給人看的專案簡介
 ├── index.html             ← 首頁：卡片牆 + 搜尋 + 分類篩選
 ├── food.html              ← 條目頁：用 ?slug=xxx 讀取並渲染 Markdown
-├── about.html             ← 關於本站 / 撰寫規則公開版
+├── add.html               ← 新增表單：填表 → 即時預覽 → 送出到 GitHub
+├── about.html             ← 關於本站
 ├── assets/
 │   ├── css/style.css      ← 唯一的樣式表（設計 token 都在 :root）
 │   └── js/
-│       ├── common.js      ← 共用函式：讀 JSON、建立卡片、主題切換、迷你 Markdown 轉換器
+│       ├── common.js      ← 共用：SITE 設定、讀 JSON、卡片、主題切換、Markdown 轉換
 │       ├── home.js        ← 首頁邏輯
-│       └── food.js        ← 條目頁邏輯
-├── data/
-│   └── foods.json         ← 所有小吃的「後設資料」(metadata) 清單
+│       ├── food.js        ← 條目頁邏輯
+│       └── add.js         ← 表單邏輯（含與 build.py 相同的檢查規則）
 ├── content/
-│   └── foods/
-│       └── <slug>.md      ← 每道小吃的內文
+│   └── foods/<slug>.md    ← ★ 唯一的內容來源，每道小吃一個檔
+├── data/
+│   └── foods.json         ← 由 build.py 自動產生，已列入 .gitignore，不要手動編輯
 ├── templates/
 │   └── food-template.md   ← 新條目的 Markdown 範本
-└── scripts/
-    └── check.py           ← 驗證腳本：檢查 JSON 與 Markdown 是否符合規則
+├── scripts/
+│   └── build.py           ← 驗證 + 產生 data/foods.json
+└── .github/workflows/pages.yml
 ```
 
 **不要**新增其他頂層資料夾。圖片若未來需要，放在 `assets/img/<slug>.webp`。
 
 ---
 
-## 4. 內容模型（最重要）
+## 4. 內容格式（最重要）
 
-### 4.1 `data/foods.json`
+每道小吃是 `content/foods/<slug>.md`，由**front matter + 四段內文**組成：
 
-是一個陣列，每個元素代表一道小吃，**欄位與順序固定**：
-
-```json
-{
-  "slug": "oyster-omelette",
-  "name": "蚵仔煎",
-  "en": "Oyster Omelette",
-  "emoji": "🦪",
-  "category": "鹹食",
-  "region": "全台",
-  "price": "60–90",
-  "spicy": 0,
-  "tags": ["海鮮", "煎炸"],
-  "summary": "番薯粉漿包住鮮蚵與蛋，淋上甜辣醬的夜市代表。",
-  "added": "2026-11-16"
-}
+```markdown
+---
+name: 蚵仔煎
+en: Oyster Omelette
+emoji: 🦪
+category: 鹹食
+region: 全台
+price: 60–90
+spicy: 0
+tags: 海鮮, 煎炸, 經典
+summary: 番薯粉漿包住鮮蚵與蛋，淋上甜辣醬的夜市代表。
+added: 2026-11-16
+---
+## 它是什麼
+...
+## 怎麼吃最對味
+...
+## 小故事
+...
+## 逛夜市小提醒
+...
 ```
+
+### 4.1 檔名與 front matter
 
 | 欄位 | 規則 |
 |------|------|
-| `slug` | 小寫英文 + 連字號（kebab-case），必須與 `content/foods/<slug>.md` 檔名相同，且全站唯一 |
+| 檔名（slug） | 英文名稱轉小寫 + 連字號（kebab-case），例如 `Braised Pork Rice` → `braised-pork-rice.md`，全站唯一 |
 | `name` | 中文名稱 |
-| `en` | 英文名稱，每個單字首字大寫 |
+| `en` | 英文名稱，只有英文字母與空格，每個單字首字大寫 |
 | `emoji` | 1 個最能代表它的 emoji |
 | `category` | 只能是：`鹹食`、`甜食`、`飲品`、`炸物`（四選一） |
 | `region` | 發源或最具代表性的地區，例如 `全台`、`台南`、`基隆` |
-| `price` | 一般價位，新台幣，格式 `最低–最高`（使用 en dash `–`） |
+| `price` | 一般價位，新台幣，格式 `最低–最高`（中間是 en dash `–`） |
 | `spicy` | 辣度整數 `0`–`3` |
-| `tags` | 1–3 個，只能從允許清單挑選：`海鮮`、`豬肉`、`雞肉`、`素食可`、`煎炸`、`燒烤`、`湯品`、`手拿`、`排隊名物`、`經典` |
-| `summary` | 一句話介紹，**30 字以內**，結尾用全形句號 `。` |
-| `added` | 新增日期 `YYYY-MM-DD` |
+| `tags` | 1–3 個，用 `, ` 分隔，只能從允許清單挑：`海鮮`、`豬肉`、`雞肉`、`素食可`、`煎炸`、`燒烤`、`湯品`、`手拿`、`排隊名物`、`經典` |
+| `summary` | 一句話介紹，**含句號 30 字以內**，結尾用全形句號 `。` |
+| `added` | 新增日期 `YYYY-MM-DD`；首頁依此日期排序（同日依檔名） |
 
-新條目**加在陣列最後面**，不要重新排序既有條目。
+front matter 只能有上述 10 個欄位，多或少都會被 `build.py` 擋下。
 
-### 4.2 `content/foods/<slug>.md`
+### 4.2 內文
 
-每篇條目的 Markdown **只寫內文**（標題、emoji、價格等由 JSON 自動產生，不要重複寫在 Markdown 裡）。
-必須**依序**包含以下四個二級標題，標題文字一字不差：
+必須**依序**包含以下四個二級標題，文字一字不差，且每段都不可空白：
 
-```markdown
-## 它是什麼
-## 怎麼吃最對味
-## 小故事
-## 逛夜市小提醒
-```
+1. `## 它是什麼`：一段 2–4 句，寫用料、口感、外觀。
+2. `## 怎麼吃最對味`：**無序清單**（`-`），2–5 點。
+3. `## 小故事`：一段 2–4 句，起源或名稱由來。
+4. `## 逛夜市小提醒`：**以一段 `>` 引用開頭**（最重要的提醒），之後可接 `-` 清單。
 
 撰寫規則：
 
 1. 使用**繁體中文**、台灣用語（例如「番薯粉」而非「红薯淀粉」）。
-2. 每個段落 2–4 句，全文約 250–500 字。
-3. 「怎麼吃最對味」用**無序清單**（`-`），3–5 點。
-4. 「逛夜市小提醒」用**一段 `>` 引用區塊**開頭，作為重點提示，之後可接清單。
-5. 不確定的歷史或數據，用「一說」「據說」等字眼，**不要捏造具體年份、店名或人名**。
-6. 不使用一級標題 `#`、不放 HTML、不放圖片、不放表格。
-   內建轉換器**只支援**以下語法，其他語法會被當成純文字：
+2. 不確定的歷史或數據，用「一說」「據說」等字眼，**不要捏造具體年份、店名或人名**。
+3. 不使用一級標題 `#`、不放 HTML、圖片或表格。內建轉換器**只支援**：
    `## 標題`、一般段落、`- 清單`、`> 引用`、`**粗體**`、`` `程式碼` ``、`[文字](https://網址)`。
-7. 中英文之間加一個半形空格（例如「用 Markdown 撰寫」）。
+4. 中英文之間加一個半形空格（例如「用 Markdown 撰寫」）。
 
 範本見 `templates/food-template.md`。
 
 ---
 
-## 5. 視覺風格
+## 5. 新增一道小吃的流程
+
+### 5.1 一般使用者（不需要寫程式）
+
+1. 打開網站的 **「＋ 新增」**（`add.html`）。
+2. 填表單，右邊會即時預覽卡片與內文；表單會即時檢查格式，全部正確才能送出。
+3. 按 **「送出到 GitHub」** → 開啟 GitHub 新增檔案頁（內容已填好）→ 按綠色 **Commit changes**。
+4. 約 1 分鐘後 GitHub Actions 驗證通過並自動更新網站。
+
+沒有 repo 編輯權限的人可以按「下載 .md 檔」交給管理者放進 `content/foods/`。
+
+### 5.2 AI 或開發者
+
+1. 由英文名稱決定 `slug`，確認 `content/foods/` 裡沒有同名檔案。
+2. 複製 `templates/food-template.md` 成 `content/foods/<slug>.md`，填好 front matter 與四段內文。
+3. 執行驗證並產生索引：
+   ```bash
+   python3 scripts/build.py
+   ```
+   必須顯示 `✅ All checks passed`。有錯誤就依訊息修正後再跑一次。
+4. 本機預覽：
+   ```bash
+   python3 -m http.server 8000
+   ```
+   打開 `http://localhost:8000/food.html?slug=<slug>` 確認畫面正常。
+5. Commit 訊息：`feat(food): add <中文名稱>`，只需要 commit 那一個 `.md` 檔。
+
+**不需要**修改任何 HTML、JS 或 JSON。如果你發現「為了加一道菜必須改程式」，代表做法錯了，請停下來重新檢查。
+
+---
+
+## 6. 視覺風格
 
 主題：**「紙燈籠下的圖鑑」**——米色紙張質感 + 夜市紅燈籠的朱紅色 + 琥珀色點綴。
 
@@ -146,9 +180,10 @@ night-market-guide/
 
 元件規則：
 
-- **卡片**：圓角 `16px`，左上角放 emoji 圓章，右上角放分類小標籤，下方是名稱、英文名、一句話介紹、價格與辣度。
+- **卡片**：圓角 `16px`，左上角 emoji 圓章，右上角分類小標籤，下方是名稱、英文名、一句話介紹、標籤、價格、地區與辣度。
 - **辣度**用 🌶️ 表示（0 顯示「不辣」）。
 - 標題用 `Noto Serif TC`，內文用 `Noto Sans TC`。
+- **按鈕**：主要動作用 `.btn.primary`（燈籠紅），其他用 `.btn`；選項用 `.chip` / `.chip-choice` 膠囊樣式。
 - 需支援**深色模式**（跟隨系統，並可用右上角按鈕切換，偏好存在 `localStorage`）。
 - 需支援**手機寬度**（≥ 360px），左右留白至少 `16px`，不可出現水平捲軸。
 
@@ -156,35 +191,14 @@ night-market-guide/
 
 ---
 
-## 6. 新增一道小吃的標準流程（AI 請照做）
-
-1. 決定 `slug`（kebab-case 英文），確認 `data/foods.json` 裡沒有重複。
-2. 複製 `templates/food-template.md` 成 `content/foods/<slug>.md`，填寫四個段落。
-3. 在 `data/foods.json` **最後**加入一筆資料，所有欄位依 4.1 規則填寫。
-4. 執行驗證：
-   ```bash
-   python3 scripts/check.py
-   ```
-   必須顯示 `✅ All checks passed`。若有錯誤，修正後再跑一次。
-5. 本機預覽（擇一）：
-   ```bash
-   python3 -m http.server 8000
-   ```
-   打開 `http://localhost:8000/food.html?slug=<slug>` 確認畫面正常。
-6. Commit 訊息格式：`feat(food): add <中文名稱>`。
-
-**不需要**修改任何 HTML 或 JS——首頁卡片、篩選、條目頁都會自動從 JSON 產生。
-如果你發現「為了加一道菜必須改程式」，代表做法錯了，請停下來重新檢查。
-
----
-
 ## 7. 修改程式或樣式時的規則
 
-- 修改 `assets/js/*.js` 或 `style.css` 前，先說明要改什麼、為什麼。
-- 保持零建置：不可引入需要編譯的語法（TypeScript、JSX、SCSS）。
-- 新增欄位到 `foods.json` 時，必須同步更新：本文件第 4.1 節、`scripts/check.py`、`templates/food-template.md`（如有關）。
-- 不可刪除既有條目；若內容有誤，直接修正。
+- **檢查規則有三份，必須同步**：本文件第 4 節、`scripts/build.py`、`assets/js/add.js` 的 `RULES` 與 `validate()`。改其中一個（例如新增一個標籤），另外兩個一定要一起改。
+- 新增 front matter 欄位時，還要同步更新：`templates/food-template.md`、`add.html` 表單、`add.js` 的 `toMarkdown()`。
+- 換 GitHub repo 時，只需要改 `assets/js/common.js` 的 `SITE`。
+- 新增頁面時，複製既有頁面的 `<head>` 與 header/footer，並在所有頁面的導覽列加上連結。
 - 所有頁面都要有 `<title>`、`<meta name="description">`、`lang="zh-Hant"`。
+- 不可刪除既有條目；若內容有誤，直接修正。
 
 ## 8. Commit 訊息格式
 
@@ -196,10 +210,13 @@ night-market-guide/
 | `style` | 只改樣式 | `style: tweak card shadow` |
 | `docs` | 修改文件 | `docs: update AGENTS.md tags list` |
 
+透過表單送出的 commit，GitHub 預設訊息為 `Create <slug>.md`，可以接受。
+
 ## 9. 完成前檢查清單
 
-- [ ] `python3 scripts/check.py` 通過
+- [ ] `python3 scripts/build.py` 通過
 - [ ] 首頁看得到新卡片，點進去內容正常
 - [ ] 手機寬度（360px）沒有跑版
 - [ ] 深色模式下文字看得清楚
 - [ ] 沒有寫死的色碼、沒有 `/` 開頭的路徑
+- [ ] 若改了檢查規則：AGENTS.md、build.py、add.js 三處一致

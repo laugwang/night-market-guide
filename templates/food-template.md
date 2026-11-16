@@ -1,3 +1,15 @@
+---
+name: 中文名稱
+en: English Name
+emoji: 🍜
+category: 鹹食
+region: 全台
+price: 50–80
+spicy: 0
+tags: 經典, 手拿
+summary: 30 字內的一句話介紹，結尾用全形句號。
+added: 2026-01-01
+---
 ## 它是什麼
 
 （2–4 句：用料、口感、外觀。讓沒吃過的人能想像它的樣子。）
