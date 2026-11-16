@@ -24,7 +24,7 @@
 | 技術 | 純 HTML + CSS + 原生 JavaScript（ES2020），不使用框架 |
 | 外部函式庫 | **不使用**。Markdown 由 `assets/js/common.js` 內建的 `renderMarkdown()` 轉成 HTML |
 | 字型 | Google Fonts：`Noto Sans TC`、`Noto Serif TC` |
-| 部署 | GitHub Pages，從 `main` 分支根目錄發佈 |
+| 部署 | GitHub Pages，由 `.github/workflows/pages.yml` 在每次 push 到 `main` 時自動部署（會先跑 `scripts/check.py`，驗證失敗就不會上線） |
 | 建置 | **禁止**加入 npm、bundler、SSG 等建置流程 |
 
 所有路徑一律使用**相對路徑**（例如 `assets/css/style.css`），不可用 `/` 開頭，否則在 GitHub Pages 子路徑下會壞掉。
