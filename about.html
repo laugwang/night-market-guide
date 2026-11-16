@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏮</text></svg>">
+  <title>關於本站｜夜市小吃圖鑑</title>
+  <meta name="description" content="夜市小吃圖鑑的設計理念與內容撰寫規則。">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html"><span class="brand-mark">🏮</span><span>夜市小吃圖鑑</span></a>
+      <nav class="nav">
+        <a href="index.html">圖鑑</a>
+        <a href="about.html" aria-current="page">關於</a>
+        <button class="theme-btn" type="button" aria-label="切換深淺色">🌙</button>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    <article class="entry prose">
+      <a class="back" href="index.html">← 回到圖鑑</a>
+      <h1>關於夜市小吃圖鑑</h1>
+      <p>這是一個用 <code>AGENTS.md</code> 驅動的小型內容網站。網站的程式只寫一次，之後每新增一道小吃，只要照著同一套規則補上「一個 Markdown 檔 + 一筆 JSON 資料」，首頁卡片、分類篩選和條目頁就會自動出現。</p>
+
+      <h2>每張圖鑑卡都一樣</h2>
+      <ul>
+        <li><strong>後設資料</strong>放在 <code>data/foods.json</code>：名稱、英文名、分類、地區、價位、辣度、標籤、一句話介紹。</li>
+        <li><strong>內文</strong>放在 <code>content/foods/&lt;slug&gt;.md</code>，固定四段：它是什麼、怎麼吃最對味、小故事、逛夜市小提醒。</li>
+        <li>分類只有四種：鹹食、甜食、飲品、炸物；標籤從固定清單挑選。</li>
+      </ul>
+
+      <h2>讓 AI 接手的方式</h2>
+      <p>對 AI 說「依照 AGENTS.md 新增一道『滷肉飯』」，它就會：</p>
+      <ul>
+        <li>取 slug（例如 <code>braised-pork-rice</code>），複製範本寫好四段內文。</li>
+        <li>在 JSON 最後加入一筆資料，欄位全部依規則填寫。</li>
+        <li>執行 <code>python3 scripts/check.py</code> 自動驗證格式，通過才算完成。</li>
+      </ul>
+      <blockquote><p>規則寫得越具體，AI 每次產出的頁面就越一致。</p></blockquote>
+
+      <h2>技術</h2>
+      <p>純 HTML、CSS、原生 JavaScript，沒有建置步驟，直接部署在 GitHub Pages。Markdown 由站內約 30 行的迷你轉換器在瀏覽器端轉成 HTML，完全不依賴外部函式庫。</p>
+    </article>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">夜市小吃圖鑑 · 純 HTML/CSS/JS 靜態網站 · 內容依 <a href="https://github.com/laugwang/night-market-guide/blob/main/AGENTS.md">AGENTS.md</a> 規則撰寫</div>
+  </footer>
+  <script src="assets/js/common.js"></script>
+</body>
+</html>

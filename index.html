@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏮</text></svg>">
+  <title>夜市小吃圖鑑</title>
+  <meta name="description" content="用圖鑑卡片認識台灣夜市小吃：價位、辣度、吃法與小故事。">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="index.html"><span class="brand-mark">🏮</span><span>夜市小吃圖鑑</span></a>
+      <nav class="nav">
+        <a href="index.html" aria-current="page">圖鑑</a>
+        <a href="about.html">關於</a>
+        <button class="theme-btn" type="button" aria-label="切換深淺色">🌙</button>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    <section class="hero">
+      <h1>走進夜市，<em>一張卡</em>認識一道小吃</h1>
+      <p>每道小吃都有一樣的格式：它是什麼、怎麼吃、小故事與逛夜市小提醒。點卡片看完整介紹。</p>
+    </section>
+    <div class="toolbar">
+      <input id="search" class="search" type="search" placeholder="搜尋小吃、地區或標籤…" aria-label="搜尋">
+      <div id="chips" class="chips" role="group" aria-label="分類篩選"></div>
+    </div>
+    <p id="count" class="count">載入中…</p>
+    <section id="grid" class="grid" aria-live="polite"></section>
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">夜市小吃圖鑑 · 純 HTML/CSS/JS 靜態網站 · 內容依 <a href="https://github.com/laugwang/night-market-guide/blob/main/AGENTS.md">AGENTS.md</a> 規則撰寫</div>
+  </footer>
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/home.js"></script>
+</body>
+</html>
